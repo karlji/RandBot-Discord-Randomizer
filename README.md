@@ -126,8 +126,9 @@ There are 2 options:
    ```
 2. Create Discord bot on [Discord Developer Portal](https://discord.com/developers/docs/intro) & store the bot token to tokens.py
     - <img src="images/discord_token.png" alt="Logo" width="150px">
-4. Create [MongoDB Atlas cluster](https://www.mongodb.com/cloud/atlas) with DB structure "bot.lists", add IP adress of your bot machine, copy "connection string" to tokens.py
+4. Create [MongoDB Atlas cluster](https://www.mongodb.com/cloud/atlas) with DB structure "bot.lists", Document structure visible below, add IP adress of your bot machine, copy "connection string" to tokens.py
     - <img src="images/mongo_token.png" alt="Logo" width="600px">
+    - <img src="images/mongo_document.png" alt="Logo" width="600px">
 5. Run randbot.py
 6. Create OAuth2 link on [Discord Developer Portal](https://discord.com/developers/). Options "bot" and "send messages" should be enough. This link can be used to invite bot to Discord servers.
     - <img src="images/oauth.png" alt="Logo" width="600px">
