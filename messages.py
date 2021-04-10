@@ -35,7 +35,7 @@ def guild_join_message():
                     value="Creates new list.",
                     inline=False)
 
-    embed.add_field(name="?shuffle {ListName}",
+    embed.add_field(name="?random {ListName}",
                     value="Randomly selects one item from list.",
                     inline=False)
 
