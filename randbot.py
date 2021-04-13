@@ -3,6 +3,7 @@ import commands as com
 import messages as mes
 import tokens as tok
 from discord.ext import tasks
+import datetime
 
 client = discord.Client()
 
@@ -41,8 +42,9 @@ async def on_message(message):
 # daily DB clean loop
 @tasks.loop(hours=24)
 async def cleandb():
-    nowstr = await com.clean()
-    print("DB cleaned " + nowstr)
+    await com.clean()
+
+    print("DB cleaned " + datetime.datetime.utcnow().strftime('%B %d %Y - %H:%M:%S'))
 
 cleandb.start()
 

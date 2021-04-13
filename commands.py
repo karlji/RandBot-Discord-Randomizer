@@ -4,8 +4,7 @@ import asyncio
 import pymongo
 import messages as mes
 import tokens as tok
-from datetime import datetime
-
+import time
 clientDB = pymongo.MongoClient(tok.mongo_token)
 db = clientDB.bot
 
@@ -45,8 +44,7 @@ async def list_command(client, message):
     #   if no errors occurred, create new list
     else:
         full_user = message.author.name + "#" + message.author.discriminator
-        now = datetime.utcnow()
-        now = int(now.strftime('%Y%m%d'))
+        now = int(time.time())
         collection.insert_one(
             {"User": full_user, "List_Name": list_name, "List": message.content, "Timestamp": now})
         title = list_name + " created!"
@@ -86,7 +84,8 @@ def randomize(server_name, full_user, list_name):
     # query based on listname & username
     output = collection.find_one({"User": full_user, "List_Name": list_name}, {"List": 1, "_id": False})
     # adding timestamp of the latest use to the list
-    timestamp = {"$set": {"Timestamp": datetime.now()}}
+    now = int(time.time())
+    timestamp = {"$set": {"Timestamp": now}}
     collection.update_one(output, timestamp)
     # formatting the query output
     output = json.dumps(output)
@@ -121,9 +120,8 @@ async def yesno_command(message):
 
 async def clean():
     col_list = db.list_collection_names()
-    now = datetime.utcnow()
-    difference = int(now.strftime('%Y%m%d')) - 30
-    nowstr = now.strftime("%d-%b-%Y (%H:%M:%S.%f)")
+    now = int(time.time())
+    difference = now - 2592000
 
     # Loops through all collections and deletes those that are older than 30 days from now
     for i in range(len(col_list)):
@@ -131,4 +129,4 @@ async def clean():
         collection = db[col]
         myquery = {"Timestamp": {"$lt": difference}}
         collection.delete_many(myquery)
-    return nowstr
+    return
