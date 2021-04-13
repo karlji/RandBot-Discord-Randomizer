@@ -89,3 +89,21 @@ def randomize(server_name, full_user, list_name):
     if output == "null":
         output = "List not found!"
     return output
+
+
+async def eightball_command(message):
+    answers = ("It is certain.", "It is decidedly so.", "Without a doubt.", "Yes – definitely.", "You may rely on it.",
+               "As I see it, yes.", "Most likely.", "Outlook good.", "Yes.", "Signs point to yes.",
+               "Reply hazy, try again.", "Ask again later.", "Better not tell you now.", "Cannot predict now.",
+               "Concentrate and ask again.", "Don't count on it.", "My reply is no.", "My sources say no.",
+               "Outlook not so good.", "Very doubtful.")
+    item = random.choice(answers)
+    await message.channel.send(embed=mes.random_message(item))
+    return
+
+
+async def yesno_command(message):
+    answers = ("yes", "no")
+    item = random.choice(answers)
+    await message.channel.send(embed=mes.random_message(item))
+    return

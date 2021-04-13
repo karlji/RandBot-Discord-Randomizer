@@ -24,6 +24,10 @@ async def on_message(message):
         return
     elif message.content.startswith('?random'):
         await com.random_command(message)
+    elif message.content.startswith('?8ball'):
+        await com.eightball_command(message)
+    elif message.content.startswith('?yesno'):
+        await com.yesno_command(message)
     elif message.content.startswith('?list'):
         await com.list_command(client, message)
     elif message.content.startswith('?delete'):

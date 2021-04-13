@@ -81,20 +81,29 @@ def commands_message():
                           description="Following commands are available:",
                           color=0xFF5733)
 
-    embed.add_field(name="?list {ListName}",
-                    value="Creates new list.",
-                    inline=False)
-
-    embed.add_field(name="?random {ListName}",
-                    value="Randomly selects one item from list.",
+    embed.add_field(name="?commands",
+                    value="Lists all available commands.",
                     inline=False)
 
     embed.add_field(name="?delete {ListName}",
                     value="Deletes existing list.",
                     inline=False)
 
-    embed.add_field(name="?commands",
-                    value="Lists all available commands.",
+    embed.add_field(name="?list {ListName}",
+                    value="Creates new list.",
+                    inline=False)
+
+    embed.add_field(name="?random {ListName}",
+                    value="Randomly selects one item from the list.",
+                    inline=False)
+
+    embed.add_field(name="?8ball",
+                    value="Gives Yes or No answer.",
+                    inline=False)
+
+    embed.add_field(name="?8ball",
+                    value="Gives random 8ball answer.",
                     inline=False)
 
     return embed
+
