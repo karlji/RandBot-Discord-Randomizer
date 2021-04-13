@@ -4,10 +4,10 @@ import asyncio
 import pymongo
 import messages as mes
 import tokens as tok
+from datetime import datetime
 
 clientDB = pymongo.MongoClient(tok.mongo_token)
 db = clientDB.bot
-collection = db.lists
 
 
 # Base class for other exceptions
@@ -21,11 +21,14 @@ class ListFormatError(Error):
 
 
 async def list_command(client, message):
+    server_name = message.guild.name
+    collection = db[server_name]
     list_name = message.content.replace('?list ', '')
     title = "Creating list: " + list_name
     await message.channel.send(embed=mes.list_message(title))
 
     try:
+        # checking if user input contains ; ... else returning Format error
         def check(m):
             if m.content.find(";") != -1:
                 return True
@@ -33,18 +36,19 @@ async def list_command(client, message):
                 raise ListFormatError
 
         message = await client.wait_for('message', timeout=60.0, check=check)
-
+    # Format error + timeout error
     except asyncio.TimeoutError:
         await message.channel.send(embed=mes.timeout_message())
     except ListFormatError:
         await message.channel.send(embed=mes.format_error_message())
 
+    #   if no errors occurred, create new list
     else:
-        server_name = message.guild.name
         full_user = message.author.name + "#" + message.author.discriminator
-        collection.insert_one({"Server": server_name,
-                               "User": full_user,
-                               "List_Name": list_name, "List": message.content})
+        now = datetime.utcnow()
+        now = int(now.strftime('%Y%m%d'))
+        collection.insert_one(
+            {"User": full_user, "List_Name": list_name, "List": message.content, "Timestamp": now})
         title = list_name + " created!"
         await message.channel.send(embed=mes.list_created_message(title))
     return
@@ -54,6 +58,7 @@ async def random_command(message):
     list_name = message.content.replace('?random ', '')
     server_name = message.guild.name
     full_user = message.author.name + "#" + message.author.discriminator
+    # calling randomize function to get random item from list
     item = randomize(server_name, full_user, list_name)
     await message.channel.send(embed=mes.random_message(item))
     return
@@ -62,10 +67,9 @@ async def random_command(message):
 async def delete_command(message):
     list_name = message.content.replace('?delete ', '')
     server_name = message.guild.name
+    collection = db[server_name]
     full_user = message.author.name + "#" + message.author.discriminator
-    collection.delete_one({"Server": server_name,
-                           "User": full_user,
-                           "List_Name": list_name})
+    collection.delete_one({"User": full_user, "List_Name": list_name})
     title = list_name + " deleted!"
     await message.channel.send(embed=mes.delete_message(title))
     return
@@ -76,16 +80,22 @@ async def commands_command(message):
     return
 
 
+# retrieving random item from list
 def randomize(server_name, full_user, list_name):
-    output = collection.find_one({"Server": server_name,
-                                  "User": full_user,
-                                  "List_Name": list_name},
-                                 {"List": 1, "_id": False})
+    collection = db[server_name]
+    # query based on listname & username
+    output = collection.find_one({"User": full_user, "List_Name": list_name}, {"List": 1, "_id": False})
+    # adding timestamp of the latest use to the list
+    timestamp = {"$set": {"Timestamp": datetime.now()}}
+    collection.update_one(output, timestamp)
+    # formatting the query output
     output = json.dumps(output)
     output = output.replace('{"List": "', '')
     output = output.replace('"}', '')
     output = output.split(";")
+    # selecting random item from the output
     output = random.choice(tuple(output))
+    # check for when query returns null
     if output == "null":
         output = "List not found!"
     return output
@@ -107,3 +117,18 @@ async def yesno_command(message):
     item = random.choice(answers)
     await message.channel.send(embed=mes.random_message(item))
     return
+
+
+async def clean():
+    col_list = db.list_collection_names()
+    now = datetime.utcnow()
+    difference = int(now.strftime('%Y%m%d')) - 30
+    nowstr = now.strftime("%d-%b-%Y (%H:%M:%S.%f)")
+
+    # Loops through all collections and deletes those that are older than 30 days from now
+    for i in range(len(col_list)):
+        col = col_list[i]
+        collection = db[col]
+        myquery = {"Timestamp": {"$lt": difference}}
+        collection.delete_many(myquery)
+    return nowstr

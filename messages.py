@@ -1,6 +1,8 @@
 import discord
 
 
+# List of embeded messages to clean up the code
+
 def list_message(title):
     embed = discord.Embed(title=title,
                           description="Please enter your list items separated by ; ",
@@ -106,4 +108,3 @@ def commands_message():
                     inline=False)
 
     return embed
-

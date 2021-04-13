@@ -2,6 +2,8 @@ import discord
 import commands as com
 import messages as mes
 import tokens as tok
+from discord.ext import tasks
+
 client = discord.Client()
 
 
@@ -35,6 +37,14 @@ async def on_message(message):
     elif message.content.startswith('?commands'):
         await com.commands_command(message)
 
+
+# daily DB clean loop
+@tasks.loop(hours=24)
+async def cleandb():
+    nowstr = await com.clean()
+    print("DB cleaned " + nowstr)
+
+cleandb.start()
 
 # Connects the client using Discord bot token
 client.run(tok.discord_token)
