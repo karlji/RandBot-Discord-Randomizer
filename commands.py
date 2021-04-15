@@ -5,6 +5,7 @@ import pymongo
 import messages as mes
 import tokens as tok
 import time
+
 clientDB = pymongo.MongoClient(tok.mongo_token)
 db = clientDB.bot
 
@@ -19,31 +20,44 @@ class ListFormatError(Error):
     pass
 
 
+class ListExistsError(Error):
+    pass
+
+
 async def list_command(client, message):
     server_name = message.guild.name
     collection = db[server_name]
     list_name = message.content.replace('?list ', '')
     title = "Creating list: " + list_name
+    full_user = message.author.name + "#" + message.author.discriminator
     await message.channel.send(embed=mes.list_message(title))
 
     try:
-        # checking if user input contains ; ... else returning Format error
         def check(m):
-            if m.content.find(";") != -1:
-                return True
+            # checking if awaited message is from the same user that used the command
+            if full_user == m.author.name + "#" + m.author.discriminator:
+                # checking if user input contains ; ... else returning Format error
+                if m.content.find(";") != -1:
+                    return True
+                else:
+                    raise ListFormatError
             else:
-                raise ListFormatError
+                return False
 
-        message = await client.wait_for('message', timeout=60.0, check=check)
+        if collection.find_one({"User": full_user, "List_Name": list_name}, {"List": 1, "_id": False}) is None:
+            message = await client.wait_for('message', timeout=60.0, check=check)
+        else:
+            raise ListExistsError
     # Format error + timeout error
     except asyncio.TimeoutError:
         await message.channel.send(embed=mes.timeout_message())
     except ListFormatError:
         await message.channel.send(embed=mes.format_error_message())
+    except ListExistsError:
+        await message.channel.send(embed=mes.list_exists_error_message())
 
     #   if no errors occurred, create new list
     else:
-        full_user = message.author.name + "#" + message.author.discriminator
         now = int(time.time())
         collection.insert_one(
             {"User": full_user, "List_Name": list_name, "List": message.content, "Timestamp": now})
@@ -129,4 +143,15 @@ async def clean():
         collection = db[col]
         myquery = {"Timestamp": {"$lt": difference}}
         collection.delete_many(myquery)
+    return
+
+
+async def print_lists(message):
+    server_name = message.guild.name
+    full_user = message.author.name + "#" + message.author.discriminator
+    collection = db[server_name]
+    query = collection.find({"User": full_user}, {"List_Name": 1, "_id": False})
+    array = list(query)
+    length = len(array)
+    await message.channel.send(embed=mes.print_lists_message(array,length))
     return

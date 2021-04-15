@@ -32,7 +32,9 @@ async def on_message(message):
     elif message.content.startswith('?yesno'):
         await com.yesno_command(message)
     elif message.content.startswith('?list'):
-        await com.list_command(client, message)
+        await com.list_command(client,message)
+    elif message.content.startswith('?showlists'):
+        await com.print_lists(message)
     elif message.content.startswith('?delete'):
         await com.delete_command(message)
     elif message.content.startswith('?commands'):
