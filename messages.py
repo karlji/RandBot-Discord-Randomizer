@@ -133,8 +133,7 @@ def print_lists_message(array, length):
         item = json.dumps(item)
         item = item.replace('{"List_Name": "', '')
         item = item.replace('"}', '')
-        list_no = "List" + str(i)
-        embed.add_field(name=list_no,
+        embed.add_field(name=item,
                         value="\u200b",
                         inline=False)
     embed.add_field(name="Support this project",
