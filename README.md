@@ -99,9 +99,8 @@ It is currently working, but error handling should be updated and new features c
 <!-- GETTING STARTED -->
 ## Getting Started
 
-There are 2 options:
-1) Only inviting my bot to your server. You can use [this link](https://discord.com/api/oauth2/authorize?client_id=830397927125286922&permissions=2048&scope=bot).
-2) Download the repository and creating the MongoDB Atlas database. More details in the Installation section.
+
+Download the repository and create the MongoDB Atlas database. More details in the Installation section.
 
 ### Prerequisites
 
