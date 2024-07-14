@@ -37,10 +37,10 @@
   </a>
 
   <h3 align="center">RandBot</h3>
+  <h2>PROJECT DISCONTINUED due to lack of interest</h2>
 
   <p align="center">
     Discord bot randomizer. Users can create a list that is stored in MongoDB and the bot can select a random item from this list.
-    <a href="https://discord.com/api/oauth2/authorize?client_id=830397927125286922&permissions=2048&scope=bot">Invite bot</a>
     ·
     <a href="https://github.com/karlji/RandBot-Discord-Randomizer/issues">Report Bug</a>
     ·
