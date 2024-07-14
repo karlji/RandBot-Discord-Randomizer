@@ -138,14 +138,21 @@ Download the repository and create the MongoDB Atlas database. More details in t
 
 Following commands are available:
 
+- ?commands
+  - Lists all available commands.
 - ?list {ListName}
   - Creates new list.
 - ?shuffle {ListName}
   - Randomly selects one item from list.
 - ?delete {ListName}
   - Deletes existing list.
-- ?commands
-  - Lists all available commands.
+- ?showlists
+   - Shows existing lists.
+- ?yesno
+   - Randomly answers Yes/No.
+- ?8ball
+   - Answers like The Magic 8 Ball.
+
 
 <!-- ROADMAP -->
 ## Roadmap
